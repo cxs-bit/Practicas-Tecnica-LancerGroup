@@ -6,13 +6,13 @@ Este proyecto está diseñado para verificar los conocimientos adquiridos en las
 
 - 🐘 PHP (8.2+)
 - 📦 Composer
-- ⚙️ Laravel 12+ o CodeIgniter 4
+- ⚙️ Laravel 12+ o CodeIgniter 4(Opcional, si el encargado lo solicita.)
 - 🌐 Vue 3+ (opcional Vuetify o Bootstrap)
 - 🎨 CSS (Bootstrap o Vuetify)
 - 📖 Habilidades investigativas (lectura de documentación)
 - 🐙 Git
 - 🧩 MySQL
-- 🧱 Algún template visual basado en Vue o Bootstrap (ej. CoreUI, BootstrapVue, Vuetify Admin, etc.)
+- 🧱 Algún template visual basado en Vue o Bootstrap (ej. Vuetify, CoreUI, BootstrapVue Admin, etc.)
 
 ---
 
@@ -76,7 +76,7 @@ Se deberá diseñar un sistema de administración de libros para una biblioteca.
 - Estructura y normalización de la base de datos
 - Calidad y organización del código
 - Claridad y coherencia del diseño visual
-- Uso correcto de Vue/AJAX en las interacciones
+- Uso correcto de Vue/Inertia en las interacciones
 - Organización y claridad de los commits
 
 ---
