@@ -1,58 +1,104 @@
-# Practicas Tecnica LancerGroup de PHP
-Este proyecto esta diseñado para verificar los conocimientos adquiridos en las siguientes tecnologías:
+📘 Práctica Técnica - LancerGroup (PHP)
+Este proyecto está diseñado para verificar los conocimientos adquiridos en las siguientes tecnologías:
 
-- PHP (7+ | 8)
-- Composer
-- JavaScript
-- Jquery
-- CSS (bootstrap)
-- Codeigniter (3 | 4)
-- Habilidades investigacionales (lectura de documentación)
-- Git
-- MySQL
-- [AdminLTE](https://adminlte.io/themes/AdminLTE/index.html)
+🛠️ Tecnologías requeridas
+🐘 PHP (8.2+)
 
-## Descripción de la práctica 
+📦 Composer
 
-Se va a diseñar un sistema para administración de libros en una biblioteca. Esta debe contar con apartados para agregar UNICAMENTE libros y autores. Un autor debe tener multiples libros, así como un libro debe tener multiples autores. Un autor necesita crearse en el sistema sin poseer libros, pero un libro debe tener al menos un autor para ser creado. Los libros, así como los autores, deben mostrarse en una tabla (una tabla para libros y otra para autores) la cual contará con botones para ver detalles del libro, editarlo o eliminarlo. Los autores contaran con la misma característica, con la diferencia de que estos no pueden ser eliminados de la db, sino ocultos a las peticiones de autores explicitamente (soft deletes) (Si un libro tiene un autor en la lista que ha sido "eliminado", este aún se debe mostrar). Las informaciones de los libros y autores pueden mostrarse de la manera que considere. En el siguiente apendice se mencionaran los datos a guardar en la db :
+⚙️ Laravel 12+ o CodeIgniter 4
 
-### Datos de los autores 
+🌐 Vue 3+ (Opcional: Vuetify o Bootstrap como framework de UI)
 
- - Nombre 
- - Apellido 
- - País 
- - Fecha de registro *
- - Cantidad de libros en el sistema *
+🎨 CSS (Preferiblemente con Bootstrap o Vuetify)
 
- ### Datos de los libros
-- Nombre
-- Fecha de publicación
-- Edición
-- Autores *
+📖 Habilidades investigativas (lectura y aplicación de documentación)
 
-## Detalles técnicos
+🐙 Git
 
- 1. La base de datos, aún si es corta debe estar correctamente normalizada (el codigo en sí puede estar relacionado, pero no es un requisito).
- 2. Se debera usar uno de los frameworks de codeigniter arriba mencionados, pero cual usar esta a disposición del pasante.
- 3. El diseño de la app no debe seguir ningun patrón especifico, pero tanto los elementos como los colores deben ser uniformes uno con otro.
- 4. Las llamadas a eventos pueden ser de manera regular (guardar formularios a través de POST o GET) usando [Ajax](https://guias.makeitreal.camp/jquery/realizando-peticiones-con-ajax).
- 5. Deben realizarse commits continuos al repositorio para el seguimiento de la prueba. Estos deben ser concisos y estar debidamente organizados.
- 6. Los campos con asterisco (*) no deben aparecer en la tabla a mostrar, pero si en los detalles del elemento (La lista de autores no se debe ver en la tabla pero si se quiere ver la información del libro, debe aparecer).
+🧩 MySQL
 
-## ¿Qué se tomará en cuenta?
+🧱 Algún template visual basado en Vue o Bootstrap (ej. CoreUI, BootstrapVue, Vuetify Admin, etc.)
 
- - Patrón de diseño
- - Calidad del codigo
- - Diseño de la base de datos
- - Librerías de apoyo utilizadas (Jquery, [Datatables](https://datatables.net/), [Bootstrap Select](https://developer.snapappointments.com/bootstrap-select/)).
+📚 Descripción de la práctica
+Se deberá diseñar un sistema de administración de libros para una biblioteca. Este sistema debe contar únicamente con apartados para:
 
-## Detalles de las asignaciones técnicas
+📕 Libros
 
- - La palabra clave DEBE significa que el enunciado es requerido y no puede alterarse.
- - La palabra clave NECESITA signifca que el enunciado es requerido, pero la ejecución está a libre interpretación.
- - La palabra clave PUEDE significa que el requisito no es necesario, no se tomará en cuenta en la puntuación, pero que sirve para practicar algo que podrías (o no) ver en el entorno laboral. 
- 
- ## Recomendaciones
- - Se pueden usar (pero no se limite a usar) modals para la visualización de los datos.
- - Para el soft delete de los autores, cree un campo extra que guarde la fecha eliminada o un valor boolean para identificar que fue eliminado (recuerde que aun deben aparecer en la sección de libros si se necesita).
- - Se vale cometer errores y explicar como se solucionaron (o se trataron de solucionar) puede dar más puntos que quitarlos.
+✍️ Autores
+
+🔁 Relación entre datos:
+Un autor puede tener múltiples libros.
+
+Un libro puede tener múltiples autores.
+
+Un autor NECESITA poder crearse sin libros.
+
+Un libro DEBE tener al menos un autor para ser creado.
+
+📋 Vista en tablas:
+Autores y Libros deben mostrarse en tablas independientes.
+
+Cada tabla debe incluir botones de:
+🔍 Ver Detalles | ✏️ Editar | 🗑️ Eliminar (o 👁️ Ocultar para autores).
+
+Los autores eliminados mediante soft delete NO deben aparecer en la lista de autores, pero sí deben seguir apareciendo en los detalles de libros donde estén relacionados.
+
+🗃️ Campos requeridos
+✍️ Autores
+Nombre
+
+Apellido
+
+País
+
+📆 Fecha de Registro (oculto en tabla, visible en detalles)
+
+📚 Cantidad de libros registrados (oculto en tabla, visible en detalles)
+
+📕 Libros
+Nombre
+
+📅 Fecha de publicación
+
+Edición
+
+✍️ Autores (múltiples)
+
+⚙️ Detalles técnicos
+📐 La base de datos debe estar correctamente normalizada.
+
+🧩 Puedes elegir entre Laravel 12+ o CodeIgniter 4.
+
+🎨 El diseño visual no tiene que seguir un patrón específico, pero DEBE mantener consistencia en los estilos.
+
+📡 Las operaciones pueden realizarse mediante formularios tradicionales o AJAX con Vue 3 o JavaScript.
+
+🧾 Los commits deben ser continuos y bien organizados, con mensajes claros.
+
+👁️‍🗨️ Los campos marcados con * NO deben mostrarse en la tabla, pero sí deben estar disponibles en la vista de detalles.
+
+🧠 ¿Qué se evaluará?
+🧱 Calidad del diseño de base de datos
+
+🧼 Calidad del código
+
+🎨 Uso y coherencia del diseño visual
+
+🧭 Estructura del proyecto y uso de patrones
+
+📌 Reglas de interpretación
+DEBE: obligatorio e inalterable.
+
+NECESITA: obligatorio, pero con flexibilidad en la forma de implementarlo.
+
+PUEDE: opcional, no afectará la calificación, pero sirve como práctica adicional.
+
+💡 Recomendaciones
+🖼️ Puedes usar modals para mostrar información detallada de autores o libros.
+
+🗑️ Para el soft delete de autores, agrega un campo deleted_at o is_deleted en la tabla correspondiente.
+
+❗ Cometer errores está permitido. Explicar cómo los solucionaste o intentaste hacerlo puede sumar puntos.
+
+✅ Asegúrate de validar que los libros no se creen sin al menos un autor.
