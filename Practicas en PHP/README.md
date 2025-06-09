@@ -65,7 +65,7 @@ Se deberá diseñar un sistema de administración de libros para una biblioteca.
 1. La base de datos debe estar correctamente **normalizada**.
 2. Puedes usar **Laravel 12+** o **CodeIgniter 4**, según prefieras.
 3. El diseño visual **no debe seguir un patrón específico**, pero debe ser coherente en estilos y colores.
-4. Las interacciones pueden realizarse a través de formularios tradicionales o mediante **AJAX / Vue 3**.
+4. Las interacciones pueden mediante el uso de **Inertia.js con Vue 3**, permitiendo una experiencia tipo SPA sin necesidad de una API separada.
 5. Deben realizarse **commits continuos y organizados** durante el desarrollo.
 6. La información oculta en tablas (*campos con asterisco*) debe mostrarse en las vistas de detalle.
 
