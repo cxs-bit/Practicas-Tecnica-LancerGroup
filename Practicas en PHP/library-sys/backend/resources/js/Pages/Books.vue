@@ -42,6 +42,12 @@
                 </v-chip>
             </template>
 
+            <template #item.authors="{ item }">
+                <span>
+                    {{ item.authors.map((author) => author.name).join(", ") }}
+                </span>
+            </template>
+
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex ga-2 justify-end">
                     <v-icon
@@ -74,55 +80,33 @@
 
     <v-dialog v-model="dialog" max-width="500">
         <v-card
-            :subtitle="`${isEditing ? 'Update' : 'Create'} your favorite book`"
-            :title="`${isEditing ? 'Edit' : 'Add'} a Book`"
+            :subtitle="`${isEditing ? 'Update' : 'Añade'} tu libro favorito`"
+            :title="`${isEditing ? 'Edit' : 'Añadir'}`"
         >
             <template v-slot:text>
                 <v-row>
                     <v-col cols="12">
                         <v-text-field
-                            v-model="record.title"
-                            label="Title"
+                            v-model="record.name"
+                            label="Nombre"
                         ></v-text-field>
                     </v-col>
 
                     <v-col cols="12" md="6">
                         <v-text-field
-                            v-model="record.author"
-                            label="Author"
+                            v-model="record.authors"
+                            label="Autor"
                         ></v-text-field>
                     </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-select
-                            v-model="record.genre"
-                            :items="[
-                                'Fiction',
-                                'Dystopian',
-                                'Non-Fiction',
-                                'Sci-Fi',
-                            ]"
-                            label="Genre"
-                        ></v-select>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-number-input
-                            v-model="record.year"
-                            :max="adapter.getYear(adapter.date())"
-                            :min="1"
-                            label="Year"
-                        ></v-number-input>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-number-input
-                            v-model="record.pages"
-                            :min="1"
-                            label="Pages"
-                        ></v-number-input>
-                    </v-col>
                 </v-row>
+                <v-col cols="12" md="6">
+                    <v-date-picker
+                        v-model="record.year"
+                        :max="adapter.getYear(adapter.date())"
+                        :min="1"
+                        label="Year"
+                    ></v-date-picker>
+                </v-col>
             </template>
 
             <v-divider></v-divider>
@@ -141,8 +125,11 @@
         </v-card>
     </v-dialog>
 </template>
-<script setup>
+<script setup lang="ts">
 import MainLayout from "../Layouts/MainLayout.vue";
+
+const props = defineProps<{ books: Array<any> }>();
+const books = ref([...props.books]);
 
 defineOptions({
     layout: MainLayout,
@@ -154,24 +141,22 @@ import { useDate } from "vuetify";
 const adapter = useDate();
 
 const DEFAULT_RECORD = {
-    title: "",
-    author: "",
-    genre: "",
-    year: adapter.getYear(adapter.date()),
+    name: "",
+    edition: "",
+    publish_date: "",
+    authors: "",
     pages: 1,
 };
 
-const books = ref([]);
 const record = ref(DEFAULT_RECORD);
 const dialog = shallowRef(false);
 const isEditing = shallowRef(false);
 
 const headers = [
-    { title: "Title", key: "title", align: "start" },
-    { title: "Author", key: "author" },
-    { title: "Genre", key: "genre" },
-    { title: "Year", key: "year", align: "end" },
-    { title: "Pages", key: "pages", align: "end" },
+    { title: "Name", key: "name" },
+    { title: "Edition", key: "edition" },
+    { title: "Publish Date", key: "publish_date" },
+    { title: "Authors", key: "authors" },
     { title: "Actions", key: "actions", align: "end", sortable: false },
 ];
 
@@ -224,47 +209,6 @@ function save() {
 function reset() {
     dialog.value = false;
     record.value = DEFAULT_RECORD;
-    books.value = [
-        {
-            id: 1,
-            title: "To Kill a Mockingbird",
-            author: "Harper Lee",
-            genre: "Fiction",
-            year: 1960,
-            pages: 281,
-        },
-        {
-            id: 2,
-            title: "1984",
-            author: "George Orwell",
-            genre: "Dystopian",
-            year: 1949,
-            pages: 328,
-        },
-        {
-            id: 3,
-            title: "The Great Gatsby",
-            author: "F. Scott Fitzgerald",
-            genre: "Fiction",
-            year: 1925,
-            pages: 180,
-        },
-        {
-            id: 4,
-            title: "Sapiens",
-            author: "Yuval Noah Harari",
-            genre: "Non-Fiction",
-            year: 2011,
-            pages: 443,
-        },
-        {
-            id: 5,
-            title: "Dune",
-            author: "Frank Herbert",
-            genre: "Sci-Fi",
-            year: 1965,
-            pages: 412,
-        },
-    ];
+    books.value = books;
 }
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AuthorController extends Controller
 {
@@ -12,8 +13,10 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $authors = Author::all();
-        return response()->json($authors);
+        $authors = Author::get();
+        return Inertia::render('Authors', [
+            'authors' => $authors,
+        ]);
     }
 
     /**
@@ -21,7 +24,15 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+        ]);
+
+        Author::create($request->all());
+return redirect()->route('authors.index');
     }
 
     /**
@@ -35,10 +46,19 @@ class AuthorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+public function update(Request $request, string $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'lastname' => 'required|string|max:255',
+        'country' => 'required|string|max:255',
+    ]);
+
+    $author = Author::findOrFail($id);
+    $author->update($request->only(['name', 'lastname', 'country']));
+
+return redirect()->route('authors.index')->with('success', 'Autor actualizado exitosamente');
+}
 
     /**
      * Remove the specified resource from storage.

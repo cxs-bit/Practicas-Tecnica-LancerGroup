@@ -13,11 +13,3 @@ Route::get('greet', function () {
     return response(['message' => 'Hello from Laravel API']);
 });
 
-
-/* BOOKS */
-Route::get('/books', [BookController::class, 'index']);
-
-
-
-/* AUTHORS */
-Route::get('/authors', [AuthorController::class, 'index']);
