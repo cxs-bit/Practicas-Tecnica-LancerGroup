@@ -32,7 +32,7 @@ class AuthorController extends Controller
         ]);
 
         Author::create($request->all());
-return redirect()->route('authors.index');
+        return redirect()->route('authors.index')->with('success', 'Autor creado exitosamente');
     }
 
     /**
@@ -46,25 +46,27 @@ return redirect()->route('authors.index');
     /**
      * Update the specified resource in storage.
      */
-public function update(Request $request, string $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'lastname' => 'required|string|max:255',
-        'country' => 'required|string|max:255',
-    ]);
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+        ]);
 
-    $author = Author::findOrFail($id);
-    $author->update($request->only(['name', 'lastname', 'country']));
+        $author = Author::findOrFail($id);
+        $author->update($request->only(['name', 'lastname', 'country']));
 
-return redirect()->route('authors.index')->with('success', 'Autor actualizado exitosamente');
-}
+        return redirect()->route('authors.index')->with('success', 'Autor actualizado exitosamente');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $author = Author::findOrFail($id);
+        $author->delete();
+        return Inertia::location(route('authors.index'));
     }
 }

@@ -4,11 +4,23 @@
         :type="alert.type"
         dismissible
         @input="alert.show = true"
-        variant="tonal"
+        variant="elevated"
         border="start"
+        location="top center"
+        elevation="24"
+        class="position-fixed"
+        style="
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 50%;
+        "
     >
         {{ alert.message }}
     </v-alert>
+
     <v-sheet border rounded>
         <v-data-table
             :headers="headers"
@@ -67,6 +79,12 @@
 
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex ga-2 justify-end">
+                    <v-icon
+                        color="medium-emphasis"
+                        icon="mdi-info"
+                        size="small"
+                        @click="edit(item.id)"
+                    ></v-icon>
                     <v-icon
                         color="medium-emphasis"
                         icon="mdi-pencil"
@@ -137,7 +155,7 @@
 
                 <v-card-actions class="bg-surface-light">
                     <v-btn
-                        text="Cancel"
+                        text="Cancelar"
                         variant="plain"
                         @click="dialog = false"
                     ></v-btn>
@@ -147,7 +165,7 @@
                     <v-btn
                         :disabled="!form"
                         :loading="loading"
-                        text="Save"
+                        text="Guardar"
                         type="submit"
                     ></v-btn>
                 </v-card-actions>
@@ -157,28 +175,23 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({
+    layout: MainLayout,
+});
+
 import { Inertia } from "@inertiajs/inertia";
 import MainLayout from "../Layouts/MainLayout.vue";
-const alert = ref({ show: false, message: "", type: "" });
+import { computed, onMounted, ref, shallowRef, watchEffect } from "vue";
+import { usePage } from "@inertiajs/vue3";
+
 const props = defineProps<{ authors: Array<any> }>();
-// const authors = ref([...props.authors]);
 const authors = computed(() => props.authors);
-function required(v) {
-    return !!v || "Este campo es requerido";
-}
 const form = ref(false);
 const editId = ref(null);
 const name = ref(null);
 const lastname = ref(null);
 const country = ref(null);
 const loading = ref(false);
-
-defineOptions({
-    layout: MainLayout,
-});
-import { computed, onMounted, ref, shallowRef } from "vue";
-import { usePage } from "@inertiajs/vue3";
-
 const dialog = shallowRef(false);
 const isEditing = shallowRef(false);
 
@@ -186,16 +199,36 @@ const headers = [
     { title: "Nombre", key: "name", align: "start" },
     { title: "Apellido", key: "lastname" },
     { title: "Pais de Procedencia", key: "country" },
-    { title: "Actions", key: "actions", align: "end", sortable: false },
+    { title: "Acciones", key: "actions", align: "end", sortable: false },
 ];
 
 onMounted(() => {
     reset();
 });
 
-function showAlert(message, type) {
+// Alerts
+const alert = ref({ show: false, message: "", type: "" });
+watchEffect(() => {
+    const page = usePage();
+    if (page.props.flash && page.props.flash.success) {
+        showAlert(page.props.flash.success, "success");
+    }
+    if (page.props.flash && page.props.flash.error) {
+        showAlert(page.props.flash.error, "error");
+    }
+});
+
+function showAlert(
+    message: string,
+    type: "success" | "error" | "info" | "warning",
+) {
     alert.value = { show: true, message, type };
     setTimeout(() => (alert.value.show = false), 3000);
+}
+
+// Functions
+function required(v) {
+    return !!v || "Este campo es requerido";
 }
 
 function addAuthor() {
@@ -218,9 +251,15 @@ function edit(id: string) {
     dialog.value = true;
 }
 
-function remove(id) {
-    const index = authors.value.findIndex((author) => author.id === id);
-    authors.value.splice(index, 1);
+function remove(id: string) {
+    Inertia.delete(`/authors/${id}`, {
+        onBefore: () => {
+            return confirm("Estas seguro que quieres eliminar a este autor?");
+        },
+        onFinish: () => {
+            reset();
+        },
+    });
 }
 function save() {
     if (!form.value) return;
@@ -232,14 +271,6 @@ function save() {
     if (isEditing.value) {
         loading.value = true;
         Inertia.put(`/authors/${editId.value}`, payload, {
-            onSuccess: () => {
-                dialog.value = false;
-                showAlert("Autor actualizado exitosamente", "success");
-            },
-            onError: (error) => {
-                dialog.value = false;
-                showAlert(error, "error");
-            },
             onFinish: () => {
                 dialog.value = false;
                 loading.value = false;
@@ -249,24 +280,14 @@ function save() {
     } else {
         loading.value = true;
         Inertia.post("/authors", payload, {
-            onSuccess: (event) => {
-                dialog.value = false;
-                showAlert("Autor creado exitosamente", "success");
-            },
-            onError: (error) => {
-                dialog.value = false;
-                showAlert(error, "error");
-            },
             onFinish: () => {
                 reset();
                 loading.value = false;
-                showAlert("Autor creado exitosamente", "success");
             },
         });
     }
 }
 function reset() {
-    console.log("running reset");
     dialog.value = false;
     name.value = null;
     lastname.value = null;
