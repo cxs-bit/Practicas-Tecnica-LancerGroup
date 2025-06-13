@@ -24,10 +24,10 @@
     <v-sheet border rounded>
         <v-data-table
             v-model:search="search"
-            :filter-keys="['name', 'edition', 'publish_date']"
+            :filter-keys="['name', 'lastname', 'country']"
             :headers="headers"
-            :hide-default-footer="books.length < 11"
-            :items="books"
+            :hide-default-footer="authors.length < 11"
+            :items="authors"
             item-value="id"
             :sort-by="[{ key: 'name', order: 'asc' }]"
         >
@@ -36,11 +36,12 @@
                     <v-toolbar-title>
                         <v-icon
                             color="medium-emphasis"
-                            icon="mdi-book"
+                            icon="mdi-book-account"
                             size="x-small"
                             start
                         ></v-icon>
-                        Tabla de Libros
+
+                        Tabla de Autores
                     </v-toolbar-title>
                     <v-text-field
                         v-model="search"
@@ -52,22 +53,35 @@
                         hide-details
                         single-line
                     ></v-text-field>
+
                     <v-spacer></v-spacer>
                     <v-btn
                         class="me-2"
                         prepend-icon="mdi-plus"
                         rounded="lg"
-                        text="Añade un libro"
+                        text="Añade un autor"
                         border
                         @click="add()"
                     ></v-btn>
                 </v-toolbar>
             </template>
+            <template v-slot:item.title="{ value }">
+                <v-chip
+                    :text="value"
+                    border="thin opacity-25"
+                    prepend-icon="mdi-book-account"
+                    label
+                >
+                    <template v-slot:prepend>
+                        <v-icon color="medium-emphasis"></v-icon>
+                    </template>
+                </v-chip>
+            </template>
             <template v-slot:item.name="{ value }">
                 <v-chip
                     :text="value"
                     border="thin opacity-25"
-                    prepend-icon="mdi-book-open-variant-outline"
+                    prepend-icon="mdi-account-outline"
                     label
                 >
                     <template v-slot:prepend>
@@ -75,18 +89,7 @@
                     </template>
                 </v-chip>
             </template>
-            <template v-slot:item.publish_date="{ value }">
-                <v-chip
-                    :text="value"
-                    border="thin opacity-25"
-                    prepend-icon="mdi-calendar"
-                    label
-                >
-                    <template v-slot:prepend>
-                        <v-icon color="medium-emphasis"></v-icon>
-                    </template>
-                </v-chip>
-            </template>
+
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex ga-2 justify-end">
                     <v-btn
@@ -95,9 +98,10 @@
                         variant="tonal"
                         size="small"
                         text="Ver mas"
-                        :href="`/books/${item.id}`"
+                        :href="`/authors/${item.id}`"
                         link
                     ></v-btn>
+
                     <v-btn
                         color="success"
                         prepend-icon="mdi-pencil"
@@ -106,6 +110,7 @@
                         text="Editar"
                         @click="edit(item.id)"
                     ></v-btn>
+
                     <v-btn
                         color="error"
                         prepend-icon="mdi-delete"
@@ -132,12 +137,12 @@
     <v-dialog v-model="dialog" max-width="500">
         <v-form v-model="form" @submit="save()">
             <v-card
-                :subtitle="`${isEditing ? 'Actualiza' : 'Añade'} un libro`"
-                :title="`${isEditing ? 'Editar' : 'Añadir'}`"
+                :subtitle="`${isEditing ? 'Update' : 'Añade'} un autor`"
+                :title="`${isEditing ? 'Edit' : 'Añadir'}`"
             >
                 <template v-slot:text>
                     <v-row>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12">
                             <v-text-field
                                 :rules="[required]"
                                 :readonly="loading"
@@ -146,12 +151,12 @@
                                 clearable
                             ></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="6">
+                        <v-col cols="12">
                             <v-text-field
                                 :rules="[required]"
                                 :readonly="loading"
-                                v-model="edition"
-                                label="Edicion"
+                                v-model="lastname"
+                                label="Apellido"
                                 clearable
                             ></v-text-field>
                         </v-col>
@@ -159,27 +164,10 @@
                             <v-text-field
                                 :rules="[required]"
                                 :readonly="loading"
-                                v-model="publish_date"
-                                label="Fecha de Publicacion"
-                                type="date"
-                            >
-                            </v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-select
-                                v-model="authors"
-                                :items="book_authors"
-                                item-title="name"
-                                item-value="id"
-                                label="Autores"
-                                :readonly="loading"
-                                :rules="[required]"
-                                multiple
-                                chips
+                                v-model="country"
+                                label="Pais de Procedencia"
                                 clearable
-                                persistent-hint
-                                hint="Selecciona uno o más autores"
-                            ></v-select>
+                            ></v-text-field>
                         </v-col>
                     </v-row>
                 </template>
@@ -217,33 +205,26 @@ import MainLayout from "../Layouts/MainLayout.vue";
 import { computed, onMounted, ref, shallowRef, watchEffect } from "vue";
 import { usePage } from "@inertiajs/vue3";
 
-const props = defineProps<{
-    books: Array<any>;
-    authors: Array<any>;
-    errors?: Record<string, string>;
-}>();
-const errors = computed(() => usePage().props.errors ?? {});
-const books = computed(() => props.books);
-const book_authors = computed(() => props.authors);
+const props = defineProps<{ authors: Array<any> }>();
+const authors = computed(() => props.authors);
 const form = ref(false);
 const editId = ref(null);
 const name = ref(null);
-const edition = ref(null);
-const publish_date = ref(null);
-const authors = shallowRef([]);
+const lastname = ref(null);
+const country = ref(null);
 const loading = ref(false);
 const dialog = shallowRef(false);
 const isEditing = shallowRef(false);
 const search = ref("");
 
 const headers = [
-    { title: "Nombre", key: "name", align: "start" as const },
-    { title: "Edición", key: "edition" },
-    { title: "Fecha de Publicación", key: "publish_date" },
+    { title: "Nombre", key: "name", align: "start" },
+    { title: "Apellido", key: "lastname" },
+    { title: "Pais de Procedencia", key: "country" },
     {
         title: "Acciones",
         key: "actions",
-        align: "center" as const,
+        align: "center",
         sortable: false,
     },
 ];
@@ -261,11 +242,6 @@ watchEffect(() => {
     }
     if (page.props.flash && page.props.flash.error) {
         showAlert(page.props.flash.error, "error");
-    }
-    if (errors.value && Object.keys(errors.value).length > 0) {
-        Object.values(errors.value).forEach((msg) => {
-            showAlert(msg as string, "error");
-        });
     }
 });
 
@@ -290,22 +266,22 @@ function add() {
 function edit(id: string) {
     isEditing.value = true;
 
-    const booksList = computed(() => usePage().props.books ?? []);
-    const found = booksList.value.find((b: any) => b && b.id === id);
+    const authors = computed(() => usePage().props.authors ?? []);
+    const found = authors.value.find((a) => a && a.id === id);
 
+    console.log(found);
     editId.value = found.id;
     name.value = found.name;
-    edition.value = found.edition;
-    publish_date.value = found.publish_date;
-    authors.value = found.authors ? found.authors.map((a: any) => a.id) : [];
+    lastname.value = found.lastname;
+    country.value = found.country;
+
     dialog.value = true;
-    console.log(found);
 }
 
 function remove(id: string) {
-    Inertia.delete(`/books/${id}`, {
+    Inertia.delete(`/authors/${id}`, {
         onBefore: () => {
-            return confirm("Estas seguro que quieres eliminar este libro?");
+            return confirm("Estas seguro que quieres eliminar a este autor?");
         },
         onFinish: () => {
             reset();
@@ -316,13 +292,12 @@ function save() {
     if (!form.value) return;
     const payload = {
         name: name.value,
-        edition: edition.value,
-        publish_date: publish_date.value,
-        authors: authors.value,
+        lastname: lastname.value,
+        country: country.value,
     };
     if (isEditing.value) {
         loading.value = true;
-        Inertia.put(`/books/${editId.value}`, payload, {
+        Inertia.put(`/authors/${editId.value}`, payload, {
             onFinish: () => {
                 dialog.value = false;
                 loading.value = false;
@@ -331,7 +306,7 @@ function save() {
         });
     } else {
         loading.value = true;
-        Inertia.post("/books", payload, {
+        Inertia.post("/authors", payload, {
             onFinish: () => {
                 reset();
                 loading.value = false;
@@ -342,7 +317,7 @@ function save() {
 function reset() {
     dialog.value = false;
     name.value = null;
-    edition.value = null;
-    publish_date.value = null;
+    lastname.value = null;
+    country.value = null;
 }
 </script>

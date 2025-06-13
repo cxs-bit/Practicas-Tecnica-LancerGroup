@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AuthorController extends Controller
 {
@@ -12,8 +13,10 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $authors = Author::all();
-        return response()->json($authors);
+        $authors = Author::get();
+        return Inertia::render('Authors', [
+            'authors' => $authors,
+        ]);
     }
 
     /**
@@ -21,7 +24,15 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+        ]);
+
+        Author::create($request->all());
+        return redirect()->route('authors.index')->with('success', 'Autor creado exitosamente');
     }
 
     /**
@@ -29,7 +40,11 @@ class AuthorController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $author = Author::find($id);
+        $author->load('books');
+        return Inertia::render('Authors/Show', [
+            'author' => $author
+        ]);
     }
 
     /**
@@ -37,7 +52,16 @@ class AuthorController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+        ]);
+
+        $author = Author::findOrFail($id);
+        $author->update($request->only(['name', 'lastname', 'country']));
+
+        return redirect()->route('authors.index')->with('success', 'Autor actualizado exitosamente');
     }
 
     /**
@@ -45,6 +69,8 @@ class AuthorController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $author = Author::findOrFail($id);
+        $author->delete();
+        return Inertia::location(route('authors.index'));
     }
 }

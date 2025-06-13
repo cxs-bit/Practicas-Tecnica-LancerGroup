@@ -40,7 +40,7 @@ export default {
                 ></v-list-item>
             </v-list>
         </v-navigation-drawer>
-        <v-main class="d-flex fill-height flex-column">
+        <v-main class="d-flex fill-height flex-column rounded-xl ma-6">
             <slot />
         </v-main>
     </v-layout>
