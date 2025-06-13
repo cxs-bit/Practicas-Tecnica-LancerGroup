@@ -23,13 +23,16 @@
 
     <v-sheet border rounded>
         <v-data-table
+            v-model:search="search"
+            :filter-keys="['name', 'lastname', 'country']"
             :headers="headers"
             :hide-default-footer="authors.length < 11"
             :items="authors"
             item-value="id"
+            :sort-by="[{ key: 'name', order: 'asc' }]"
         >
             <template v-slot:top>
-                <v-toolbar flat>
+                <v-toolbar>
                     <v-toolbar-title>
                         <v-icon
                             color="medium-emphasis"
@@ -40,18 +43,28 @@
 
                         Tabla de Autores
                     </v-toolbar-title>
+                    <v-text-field
+                        v-model="search"
+                        density="compact"
+                        label="Buscar"
+                        prepend-inner-icon="mdi-magnify"
+                        variant="solo"
+                        flat
+                        hide-details
+                        single-line
+                    ></v-text-field>
 
+                    <v-spacer></v-spacer>
                     <v-btn
                         class="me-2"
                         prepend-icon="mdi-plus"
                         rounded="lg"
                         text="Añade un autor"
                         border
-                        @click="addAuthor()"
+                        @click="add()"
                     ></v-btn>
                 </v-toolbar>
             </template>
-
             <template v-slot:item.title="{ value }">
                 <v-chip
                     :text="value"
@@ -79,25 +92,33 @@
 
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex ga-2 justify-end">
-                    <v-icon
-                        color="medium-emphasis"
-                        icon="mdi-info"
+                    <v-btn
+                        color="secondary"
+                        prepend-icon="mdi-information"
+                        variant="tonal"
                         size="small"
-                        @click="edit(item.id)"
-                    ></v-icon>
-                    <v-icon
-                        color="medium-emphasis"
-                        icon="mdi-pencil"
-                        size="small"
-                        @click="edit(item.id)"
-                    ></v-icon>
+                        text="Ver mas"
+                        :href="`/authors/${item.id}`"
+                        link
+                    ></v-btn>
 
-                    <v-icon
-                        color="medium-emphasis"
-                        icon="mdi-delete"
+                    <v-btn
+                        color="success"
+                        prepend-icon="mdi-pencil"
+                        variant="tonal"
                         size="small"
+                        text="Editar"
+                        @click="edit(item.id)"
+                    ></v-btn>
+
+                    <v-btn
+                        color="error"
+                        prepend-icon="mdi-delete"
+                        variant="tonal"
+                        size="small"
+                        text="Borrar"
                         @click="remove(item.id)"
-                    ></v-icon>
+                    ></v-btn>
                 </div>
             </template>
             <template v-slot:no-data>
@@ -194,12 +215,18 @@ const country = ref(null);
 const loading = ref(false);
 const dialog = shallowRef(false);
 const isEditing = shallowRef(false);
+const search = ref("");
 
 const headers = [
     { title: "Nombre", key: "name", align: "start" },
     { title: "Apellido", key: "lastname" },
     { title: "Pais de Procedencia", key: "country" },
-    { title: "Acciones", key: "actions", align: "end", sortable: false },
+    {
+        title: "Acciones",
+        key: "actions",
+        align: "center",
+        sortable: false,
+    },
 ];
 
 onMounted(() => {
@@ -231,7 +258,7 @@ function required(v) {
     return !!v || "Este campo es requerido";
 }
 
-function addAuthor() {
+function add() {
     isEditing.value = false;
     dialog.value = true;
 }

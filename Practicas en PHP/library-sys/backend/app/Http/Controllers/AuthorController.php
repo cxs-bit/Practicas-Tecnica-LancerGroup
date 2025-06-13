@@ -40,7 +40,11 @@ class AuthorController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $author = Author::find($id);
+        $author->load('books');
+        return Inertia::render('Authors/Show', [
+            'author' => $author
+        ]);
     }
 
     /**
